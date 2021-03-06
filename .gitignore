@@ -49,3 +49,5 @@ crashlytics-build.properties
 
 # Addition
 _ReSharper.Caches/
+UserSettings/
+.vsconfig
