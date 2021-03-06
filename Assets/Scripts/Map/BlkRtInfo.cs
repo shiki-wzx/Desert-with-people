@@ -63,7 +63,7 @@ public class BlkRtInfo : MonoBehaviour
             if (hits < 1)
                 continue;
             // will not be null (probably)
-            var rtInfo = hitRst[0].collider.gameObject.GetComponentInParent<BlkRtInfo>();
+            var rtInfo = hitRst[0].collider.GetComponentInParent<BlkRtInfo>();
             adjBlks.Add(rtInfo);
         }
 
