@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ae0f5571a8cd0f40b2c5f76315a36ac, type: 3}
+  m_Name: BlockTypeDict
+  m_EditorClassIdentifier: 
+  shaQiu: {fileID: 11400000, guid: 1715cbae4c9b8924f8bfa8174d016c58, type: 2}
+  shaDi: {fileID: 11400000, guid: 2a808524aae64ed44a0de9307efa549e, type: 2}
+  pingDi: {fileID: 11400000, guid: 04469e865297ad5468405e859f35aad1, type: 2}
+  caoDi: {fileID: 11400000, guid: e900ec2509235c44b83fb5a175921683, type: 2}
+  youMiao: {fileID: 11400000, guid: 5d93a8f1d47acf3459a9e269ce153e45, type: 2}
+  zhiWu: {fileID: 11400000, guid: 9ebe147ea200490489ec08e5351660cc, type: 2}
+  zhiShaZhan: {fileID: 11400000, guid: baf81e518c180674282b189a06a97d7c, type: 2}
