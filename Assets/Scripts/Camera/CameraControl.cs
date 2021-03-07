@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 
+
 // todo: bound this
 // todo: smooth this
-public class CameraControl : MonoBehaviour
-{
+public class CameraControl : MonoBehaviour {
     // todo: test code
     [SerializeField] private GameObject highlightPrefab;
 
@@ -20,13 +20,11 @@ public class CameraControl : MonoBehaviour
 
     private new Camera camera;
 
-    private void Awake()
-    {
+    private void Awake() {
         camera = GetComponent<Camera>();
 
         // todo: test code
-        ClickCallback += delegate(BlkRtInfo info)
-        {
+        ClickCallback += delegate(BlkRtInfo info) {
             var hl = Instantiate(highlightPrefab, info.transform, false);
             Destroy(hl, 1);
         };
@@ -36,14 +34,12 @@ public class CameraControl : MonoBehaviour
     private const string MouseX = "Mouse X", MouseY = "Mouse Y", MouseScroll = "Mouse ScrollWheel";
     private const int MouseLeft = 0, MouseRight = 1, MouseMiddle = 2;
 
-    private void LateUpdate()
-    {
+    private void LateUpdate() {
         var zoom = Input.GetAxis(MouseScroll) * zoomSpeed * Time.deltaTime;
 
         var panX = 0f;
         var panY = 0f;
-        if (Input.GetMouseButton(MouseMiddle))
-        {
+        if(Input.GetMouseButton(MouseMiddle)) {
             panX = Input.GetAxis(MouseX) * panSpeed * Time.deltaTime;
             panY = Input.GetAxis(MouseY) * panSpeed * Time.deltaTime;
         }
@@ -52,8 +48,7 @@ public class CameraControl : MonoBehaviour
 
         var pitch = 0f;
         var yaw = 0f;
-        if (Input.GetMouseButton(MouseRight))
-        {
+        if(Input.GetMouseButton(MouseRight)) {
             pitch = Input.GetAxis(MouseY) * orbitSpeed * Time.deltaTime;
             yaw = Input.GetAxis(MouseX) * orbitSpeed * Time.deltaTime;
         }
@@ -62,12 +57,10 @@ public class CameraControl : MonoBehaviour
         transform.Rotate(-pitch, 0, 0); // Space.Self
 
 
-        if (Input.GetMouseButtonDown(MouseLeft))
-        {
+        if(Input.GetMouseButtonDown(MouseLeft)) {
             var hasHit = Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition),
-                out var hitInfo, 100f, LayerMask.GetMask("BlkLayer"));
-            if (hasHit)
-            {
+                                         out var hitInfo, 100f, LayerMask.GetMask("BlkLayer"));
+            if(hasHit) {
                 var rtInfo = hitInfo.collider.GetComponentInParent<BlkRtInfo>();
                 ClickCallback?.Invoke(rtInfo);
             }
