@@ -6,12 +6,14 @@ using UnityEngine.UI;
 public class Exclamation : MonoBehaviour
 {
     // Start is called before the first frame update
-    public bool canblinking=false;
+    public bool canblinking;
     private Image blinkImage;
     private bool downAlpha=true;
+    public float t;
     void Start()
     {
         blinkImage = GetComponent<Image>();
+        canblinking = true;
     }
 
     // Update is called once per frame
@@ -27,7 +29,16 @@ public class Exclamation : MonoBehaviour
             {
                 downAlpha = false;
             }
-           if()
+           if(downAlpha)
+            {
+                blinkImage.color = new Color(255, 255, 255, Mathf.Lerp(blinkImage.color.a, 100, t*Time.deltaTime));
+                Debug.Log(downAlpha);
+            }
+            else
+            {
+                blinkImage.color = new Color(255, 255, 255, Mathf.Lerp(blinkImage.color.a, 255, t * Time.deltaTime));
+                Debug.Log(downAlpha);
+            }
         }
     }
 }
