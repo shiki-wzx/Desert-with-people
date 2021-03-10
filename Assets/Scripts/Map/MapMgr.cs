@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 
-public partial class MapMgr : MonoBehaviour {
+public partial class MapMgr : SingletonMono<MapMgr> {
     /// <summary> Update green value. Call at end of turn. </summary>
     /// todo: optimization
     [ContextMenu("Propagate GreenValue")]

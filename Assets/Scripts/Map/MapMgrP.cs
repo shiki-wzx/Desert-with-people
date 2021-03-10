@@ -4,12 +4,13 @@ using UnityEngine;
 
 public partial class MapMgr {
     /// <summary> Helper function for event </summary>
+    /// <returns> whether degradation happens </returns>
     public bool RandomDegrade(int num, BlockType dstType, params BlockType[] srcTypes) {
         var candidates = childBlks.Where(blk => blk.BlkParam.Type.In(srcTypes)).ToArray();
-        if(candidates.Length < num)
+        if(candidates.Length == 0 || num < 1)
             return false;
 
-        var numReq = num;
+        var numReq = Mathf.Min(num, candidates.Length);
         for(var numAva = candidates.Length; numAva > 0 && numReq > 0; --numAva) {
             var prob = (float)numReq / numAva;
             if(Random.value > prob)
@@ -25,14 +26,14 @@ public partial class MapMgr {
     /// todo: optimization
     public MapStatInfo GetStatus() {
         var msInfo = new MapStatInfo {
-            AnyBlkWhoseAdjDesertLt4 = false,
-            AnyBlkWhoseAdjDesertEq0 = false,
+            AnyNotDesertBlkWhoseAdjDesertLt4 = false,
+            AnyNotDesertBlkWhoseAdjDesertEq0 = false,
             AnyGreenBlkWhoseAdjAllGreen = false
         };
 
         foreach(var blk in childBlks) {
-            if(msInfo.AnyBlkWhoseAdjDesertLt4 &&
-               msInfo.AnyBlkWhoseAdjDesertEq0 &&
+            if(msInfo.AnyNotDesertBlkWhoseAdjDesertLt4 &&
+               msInfo.AnyNotDesertBlkWhoseAdjDesertEq0 &&
                msInfo.AnyGreenBlkWhoseAdjAllGreen)
                 break;
             if(blk.BlkParam.Type.In(BlockType.ShaQiu, BlockType.ShaDi))
@@ -49,11 +50,10 @@ public partial class MapMgr {
                     ++notGreenCnt;
             }
 
-            // TODO: fix 积少成多
             if(desertCnt == 0)
-                msInfo.AnyBlkWhoseAdjDesertLt4 = msInfo.AnyBlkWhoseAdjDesertEq0 = true;
+                msInfo.AnyNotDesertBlkWhoseAdjDesertLt4 = msInfo.AnyNotDesertBlkWhoseAdjDesertEq0 = true;
             else if(desertCnt < 4)
-                msInfo.AnyBlkWhoseAdjDesertLt4 = true;
+                msInfo.AnyNotDesertBlkWhoseAdjDesertLt4 = true;
             if(blk.BlkParam.Type != BlockType.PingDi && notGreenCnt == 0)
                 msInfo.AnyGreenBlkWhoseAdjAllGreen = true;
         }
@@ -65,10 +65,10 @@ public partial class MapMgr {
 
 public struct MapStatInfo {
     /// <summary> 积少成多 I </summary>
-    public bool AnyBlkWhoseAdjDesertLt4;
+    public bool AnyNotDesertBlkWhoseAdjDesertLt4;
 
     /// <summary> 积少成多 II </summary>
-    public bool AnyBlkWhoseAdjDesertEq0;
+    public bool AnyNotDesertBlkWhoseAdjDesertEq0;
 
     /// <summary> 积少成多 III </summary>
     public bool AnyGreenBlkWhoseAdjAllGreen;
