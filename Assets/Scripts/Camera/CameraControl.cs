@@ -5,8 +5,7 @@ using UnityEngine;
 // todo: bound this
 // todo: smooth this
 public class CameraControl : MonoBehaviour {
-    // todo: test code
-    [SerializeField] private GameObject highlightPrefab;
+    //[SerializeField] private GameObject highlightPrefab;
 
     [SerializeField] private float panSpeed = 50;
     [SerializeField] private float orbitSpeed = 500;
@@ -20,19 +19,22 @@ public class CameraControl : MonoBehaviour {
 
     private new Camera camera;
 
+
     private void Awake() {
         camera = GetComponent<Camera>();
 
         // todo: test code
         ClickCallback += delegate(BlkRtInfo info) {
-            var hl = Instantiate(highlightPrefab, info.transform, false);
-            Destroy(hl, 1);
+            //var hl = Instantiate(highlightPrefab, info.transform, false);
+            //Destroy(hl, 1);
+            Debug.Log($"#{info.BlkIdx} {info.BlkParam.Type} clicked");
         };
     }
 
 
     private const string MouseX = "Mouse X", MouseY = "Mouse Y", MouseScroll = "Mouse ScrollWheel";
     private const int MouseLeft = 0, MouseRight = 1, MouseMiddle = 2;
+
 
     private void LateUpdate() {
         var zoom = Input.GetAxis(MouseScroll) * zoomSpeed * Time.deltaTime;
