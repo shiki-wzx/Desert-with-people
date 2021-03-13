@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GenBlkPh : MonoBehaviour {
     [SerializeField] private GameObject blkPhPfb;
-    [SerializeField] private float blkWidth = .578f;
+    [SerializeField] private float blkWidth = .66f;
 
     private readonly Vector3 basePos = Vector3.zero;
 

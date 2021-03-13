@@ -41,7 +41,7 @@ public partial class BlkRtInfo : MonoBehaviour {
 
 
     // todo: hard coded; refer to same source instead
-    private const float BlkWidth = .578f, BlkHeight = .2f;
+    private const float BlkWidth = .66f, BlkHeight = .2f;
 
     private readonly RaycastHit[] hitRst = new RaycastHit[1];
 

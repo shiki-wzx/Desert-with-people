@@ -6,7 +6,7 @@ using UnityEngine;
 public partial class MapMgr : SingletonMono<MapMgr> {
     /// <summary> Update green value. Call at end of turn. </summary>
     /// todo: optimization
-    [ContextMenu("Propagate GreenValue")]
+    [ContextMenu("Propagate GreenValue For Debug")]
     public MapUpdInfo PropagateGreenValue(bool skipDesertify = false) {
         var muInfo = new MapUpdInfo { SeedingTriggered = false, DegradationTriggered = false };
 

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 5
   greenValue: 2
-  blockPrefab: {fileID: 7052847622233624344, guid: bae4971d427213041847ebbafcb6df3d, type: 3}
+  blockPrefab: {fileID: 3649093615936749040, guid: bae4971d427213041847ebbafcb6df3d, type: 3}
