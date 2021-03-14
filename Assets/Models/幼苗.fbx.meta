@@ -3,7 +3,57 @@ guid: e125e8216e2820b4cba14821534deb1b
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_10"
+    second: {fileID: 2100000, guid: 2354315acf82c25499905ae3812e81a1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_12"
+    second: {fileID: 2100000, guid: 3e875401824a1bc428ff675925e3ddc0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_16"
+    second: {fileID: 2100000, guid: 7c4ace1727fc1bb4baf21ff29ce3f414, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_18"
+    second: {fileID: 2100000, guid: 90f94e13bead771489d842d59e45e8d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_2"
+    second: {fileID: 2100000, guid: 56fe142e55a195f4aa3c9b3484f8af7e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_4"
+    second: {fileID: 2100000, guid: 53890cef2337adc4a88df502213fe8f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_41"
+    second: {fileID: 2100000, guid: e815278cc002ec14bbd9240db8bd93dd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_43"
+    second: {fileID: 2100000, guid: 722aee7b05fb3dd49bcef98c398134be, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_6"
+    second: {fileID: 2100000, guid: f0303bc23e7311045af71918018d0a46, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u6750\u8D28_8"
+    second: {fileID: 2100000, guid: e9e3de59578cd1648b06bfa3b0e86165, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -40,8 +90,8 @@ ModelImporter:
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 1
-    importBlendShapes: 1
-    importCameras: 1
+    importBlendShapes: 0
+    importCameras: 0
     importLights: 1
     fileIdsGeneration: 2
     swapUVChannels: 0

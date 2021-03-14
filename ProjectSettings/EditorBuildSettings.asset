@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Shiki_Scene/Gaming Scene.unity
+    guid: 9c56dc59b158ddb479fb928724d4179a
   m_configObjects: {}

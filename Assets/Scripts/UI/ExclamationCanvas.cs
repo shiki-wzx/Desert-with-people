@@ -33,12 +33,10 @@ public class ExclamationCanvas : MonoBehaviour
             if (downAlpha)
             {
                 blinkImage.alpha =  Mathf.Lerp(blinkImage.alpha,0.3f, t * Time.deltaTime);
-                Debug.Log(downAlpha);
             }
             else
             {
                 blinkImage.alpha =  Mathf.Lerp(blinkImage.alpha, 1, t * Time.deltaTime);
-                Debug.Log(downAlpha);
             }
         }
     }
