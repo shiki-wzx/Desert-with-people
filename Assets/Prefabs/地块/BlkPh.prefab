@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockTypeDict: {fileID: 11400000, guid: 378da908dd6b54f438668d32359359fa, type: 2}
+  workerPrefab: {fileID: 4912553544623812530, guid: f9152fc6bcc177a43975b83612492932, type: 3}

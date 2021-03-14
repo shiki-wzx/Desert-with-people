@@ -1,10 +1,45 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+
 public partial class BlkRtInfo {
+    [SerializeField] private GameObject workerPrefab;
+
+    private List<GameObject> workerGos;
+
+
+    // todo: use spawn point
+    private void SpawnWorkers() {
+        var magicHide = Random.Range(0, 3);
+        if(magicHide != 0)
+            workerGos.Add(Instantiate(workerPrefab,
+                                      transform.position + new Vector3(-0.09f, 0.25f, 0.34f),
+                                      Quaternion.Euler(0, -116, 0)));
+        if(magicHide != 1)
+            workerGos.Add(Instantiate(workerPrefab,
+                                      transform.position + new Vector3(0.42f, 0.25f, -0.08f),
+                                      Quaternion.Euler(0, 0, 0)));
+        if(magicHide != 2)
+            workerGos.Add(Instantiate(workerPrefab,
+                                      transform.position + new Vector3(-0.08f, 0.25f, -0.48f),
+                                      Quaternion.Euler(0, 169, 0)));
+    }
+
+
+    private void ClearWorkers() {
+        foreach(var w in workerGos)
+            Destroy(w);
+        workerGos.Clear();
+    }
+
+
+    [ContextMenu("Sand Control")]
     public void SandControl() {
         if(HasActionQueued || !BlkParam.Type.In(BlockType.ShaQiu, BlockType.ShaDi, BlockType.PingDi))
             return;
         HasActionQueued = true;
         UpdateGreenDeltaBy(1);
-        // todo: display man
+        SpawnWorkers();
     }
 
 
@@ -13,7 +48,7 @@ public partial class BlkRtInfo {
             return;
         HasActionQueued = true;
         SetBlkType(BlockType.YouMiao);
-        // todo: display man
+        //SpawnWorkers();
     }
 
 
@@ -35,16 +70,17 @@ public partial class BlkRtInfo {
 
 
     /// <summary>
-    /// Clear buffered delta & queued action. Called at the end of turn by MapMgr.
+    /// Clear buffered delta & queued action & model. Called at the end of turn by MapMgr.
     /// </summary>
     public void ClearGreenDelta() {
         HasActionQueued = false;
         GreenDelta = 0;
-        // todo: clear man
+        ClearWorkers();
     }
 
 
     private void Awake() {
+        workerGos = new List<GameObject>();
         ClearGreenDelta();
         var mapMgr = GetComponentInParent<MapMgr>();
         mapMgr.RegisterBlk(this);
