@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskIndex: 0
   targetGreen: 0
+  targetNotDesert: 6
   accomplished: 0

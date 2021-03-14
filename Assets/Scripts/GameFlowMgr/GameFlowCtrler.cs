@@ -60,7 +60,7 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	[SerializeField]
 	private EventSystem eventSystem;
 	[HideInInspector]
-	bool skipDesertify = false;
+	public bool skipDesertify = false;
 	bool thirdLetterTriggered = false;
 	//public class currentCompletation
 	//{
@@ -76,13 +76,15 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	public Round round;//also combined with season
 	[Header("GameRoundInfo")]
 	[SerializeField]
-	public int labourForceMaximun = 10;
+	public int labourForceMaximun = 100;
 	[SerializeField]
 	public int labourForce = 10;
 	public float labourForceCostCoef = 1.0f;
 	[SerializeField]
 	public Season currentSeason;
+	public List<bool> taskAccomplished;
 	//public currentCompletation StateInformation = new currentCompletation();
+	Dictionary<PlayerActions.ActionType, int> mp;
 	[Button]
 	public void ReadInInfo()
 	{
@@ -91,16 +93,24 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		RegisterEvents(eventSettings);
 		for (var i = 0; i < eventSystem.achivementsSettings.achivements.Count; i++)
 			accomplishedAchivement.Add(false);
+		for (var i = 0; i < eventSystem.taskEventSettings.tasks.Count; i++)
+			taskAccomplished.Add(false);
 		round = new Round();
 	}
 
 	protected override void OnInstanceAwake()
 	{
+		mp.Add(PlayerActions.ActionType.DesertHandle, 50);
+		mp.Add(PlayerActions.ActionType.Plant, 150);
 		eventPool.Clear();
 		InRoundEventPool.Clear();
 		accomplishedAchivement.Clear();
 		eventSystem = GetComponent<EventSystem>();
 		m_UIMgr = UIManager.Instance;
+		for (var i = 0; i < eventSystem.achivementsSettings.achivements.Count; i++)
+			accomplishedAchivement.Add(false);
+		for (var i = 0; i < eventSystem.taskEventSettings.tasks.Count; i++)
+			taskAccomplished.Add(false);
 	}
 	protected void OnEnable()
 	{
@@ -126,22 +136,58 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 			}
 		}
 	}
-	/// <summary>
-	/// Use this func to start new turn
-	/// </summary>
 	[Button]
 	public void NewRound()
 	{
 		//轮次流程：在当前轮次结束前执行当前轮次的事件,然后更新地块，然后测试成就，然后调整季节，然后轮次+1（当前轮次结束），劳动力回复，执行下一轮的随机事件
-		ExcuteEvent(round.roundCount, false);
+		if (round.roundCount == 0)
+		{
+			UIManager.Instance.ShowTaskMessage(0);
+		}
+		int eventIndex = ExcuteEvent(round.roundCount, false);
 		UpdateBlkInfo();
+		int achiId=
 		AchivementTest(AchivementUpd());
 		SeasonAdjust(round.roundCount);
+		int year = (round.roundCount / 12);
 		//on last round end
-		round++;
+		UIUpd(eventIndex,achiId);
+		round++;//=================================================================
+		LabourForceMaximunIncrease(year);
 		LabourForceRecover();
 		// on new round begin
 		ExcuteEvent(round.roundCount, true);
+	}
+	public void UIUpd(int eventIndex,int achievementIndex)
+	{
+		var a = UIManager.Instance;
+		UIManager.Instance.GetNewMail();
+		UIManager.Instance.changeCalendar((round.roundCount / 12), (int)currentSeason);
+		a.ChangePlantNeedNum((int)(mp[PlayerActions.ActionType.Plant] * labourForceCostCoef));
+		a.ChangeControlNeedNum((int)(mp[PlayerActions.ActionType.DesertHandle] * labourForceCostCoef));
+		a.ShowEndTurnWindow(eventPool[eventIndex]);
+		a.ShowAchievementWindow(achievementIndex);
+		int accomplishedTaskCount = 0;
+		foreach (var i in taskAccomplished) accomplishedTaskCount += i == true ? 1 : 0;
+		a.ProgressBarUpd(accomplishedTaskCount);
+		UIManager.Instance.GUIOnNewEventRecieved();
+
+		//under fix
+		UIManager.Instance.ShowTaskMessage(accomplishedTaskCount + 1);
+		//todo accordingto the return value show
+	}
+
+	//todo tasktest:if reached    taskaccomplished [index] set true    call audio
+	public void TaskTest()
+	{
+		if (round.roundCount != 0) UIManager.Instance.ShowSendEmail();
+	}
+	public void LabourForceMaximunIncrease(int year)
+	{
+		if (year != (int)round.roundCount / 12)
+		{
+			labourForceMaximun += 50;
+		}
 	}
 	AchivementReq AchivementUpd()
 	{
@@ -167,10 +213,11 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	}
 	void SeasonAdjust(int round)
 	{
-		currentSeason = (Season)Mathf.Floor(round / 4);
+		currentSeason = (Season)Mathf.Floor((round / 4) % 3);
 	}
-	void ExcuteEvent(int roundCount, bool inRound)
+	int ExcuteEvent(int roundCount, bool inRound)
 	{
+		int eventIndex = -1;
 		if (!inRound)
 		{
 			//先检索执行特定事件
@@ -179,12 +226,14 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 				if (thisEvent.property == LocalEventProperty.OnRoundEnd)
 				{
 					localEventMgr.ExcuteEvent(thisEvent, out skipDesertify);
+					eventIndex = thisEvent.index;
 					continue;
 				}
 				//roundEndEvent
 				if (roundCount == thisEvent.specificRound && !thisEvent.isRandomEvent)
 				{
 					localEventMgr.ExcuteEvent(thisEvent, out skipDesertify);
+					eventIndex = thisEvent.index;
 					continue;
 				}
 			}
@@ -192,32 +241,40 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		else
 		{
 			//回合开始，执行随机事件
-			LocalEventMgr.Instance.ExcuteEvent(InRoundEventPool[Random.Range(0, 12)], out skipDesertify);
+			eventIndex = Random.Range(0, 12);
+			LocalEventMgr.Instance.ExcuteEvent(InRoundEventPool[eventIndex], out skipDesertify);
 		}
 		//第三封信的回合，特判
 		if (letterInfo.currentLetterCount == 3 && !thirdLetterTriggered)
 		{
+			eventIndex = 4;
 			LocalEventMgr.Instance.ExcuteEvent(eventPool[4], out skipDesertify);
 			thirdLetterTriggered = true;
 		}
+		return eventIndex;
 	}
-	void AchivementTest(AchivementReq achi)
+	int AchivementTest(AchivementReq achi)
 	{
+		int index = 0;
 		if (achi.AnyNotDesertBlkWhoseAdjDesertLt4 && !accomplishedAchivement[0])
 		{
 			accomplishedAchivement[0] = true;
+			index = 0;
 		}
 		if (achi.AnyNotDesertBlkWhoseAdjDesertEq0 && !accomplishedAchivement[1])
 		{
 			accomplishedAchivement[1] = true;
+			index = 1;
 		}
 		if (achi.AnyGreenBlkWhoseAdjAllGreen && !accomplishedAchivement[2])
 		{
 			accomplishedAchivement[2] = true;
+			index = 2;
 		}
 		if (achi.SeedingTriggered && !accomplishedAchivement[3])
 		{
 			accomplishedAchivement[3] = true;
+			index = 3;
 		}
 		for (int i = 0; i < EventSystem.Instance.achivements.Count; i++)
 		{
@@ -230,12 +287,13 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 					)
 				{
 					accomplishedAchivement[i] = true;
+					index = i;
 				}
 
 			}
 		}
+		return index;
 	}
-
 	private void Update()
 	{
 		if (CheckNewRound())

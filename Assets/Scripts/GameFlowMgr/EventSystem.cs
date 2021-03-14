@@ -15,7 +15,7 @@ public class EventSystem : SingletonMono<EventSystem>
 	{
 		foreach (var task in taskEventSettings.tasks)
 		{
-			tasks.Add(new TasksInfo(task.taskIndex, task.targetGreen));
+			tasks.Add(new TasksInfo(task.taskIndex, task.targetGreen,task.targetNotDesert));
 		}
 		foreach (var achivement in achivementsSettings.achivements)
 		{
@@ -28,13 +28,13 @@ public class EventSystem : SingletonMono<EventSystem>
 	{
 		foreach (var task in taskEventSettings.tasks)
 		{
-			tasks.Add(new TasksInfo(task.taskIndex, task.targetGreen));
+			tasks.Add(new TasksInfo(task.taskIndex, task.targetGreen, task.targetNotDesert));
 		}
 		foreach (var achivement in achivementsSettings.achivements)
 		{
 			achivements.Add(new AchivementInfo(achivement.index));
 		}
-		
+
 	}
 	[Button]
 	public void SaveTasksSettings()
@@ -56,19 +56,22 @@ public class EventSystem : SingletonMono<EventSystem>
 			achivementsSettings.achivements[i].achivementName = achivements[i].achivementName;
 		}
 	}
-	
+
 }
 public class TasksInfo
 {
-	public TasksInfo(int _taskIndex, int _targetG, bool accomplished = false)
+	public TasksInfo(int _taskIndex, int _targetG, int _targetNotDesert, bool accomplished = false)
 	{
 		taskIndex = _taskIndex;
 		targetGreen = _targetG;
+		targetNotDesert = _targetNotDesert;
 	}
 	[Header("任务号")]
 	public int taskIndex;
 	[Header("目标绿地")]
 	public int targetGreen;
+	[Header("目标非沙漠化地")]
+	public int targetNotDesert;
 	[Header("是否达成")]
 	[OnValueChanged("GetLetter")]
 	public bool accomplished;

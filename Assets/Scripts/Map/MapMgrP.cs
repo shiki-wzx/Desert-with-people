@@ -65,9 +65,10 @@ public partial class MapMgr {
     [SerializeField] private Material greyMaterial;
 
 
-    public void GreyByType(params BlockType[] types) {
+    /// <param name="types"> the types NOT to be grey </param>
+    public void GreyExceptType(params BlockType[] types) {
         foreach(var blk in childBlks) {
-            if(!blk.BlkParam.Type.In(types))
+            if(blk.BlkParam.Type.In(types))
                 continue;
             foreach(var childRenderer in blk.GetComponentsInChildren<MeshRenderer>())
                 childRenderer.material = greyMaterial;

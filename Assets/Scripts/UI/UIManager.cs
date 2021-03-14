@@ -93,6 +93,10 @@ public class UIManager : SingletonMono<UIManager>
 			Debug.Log("Handle!");
 		}
 	}
+	public void GUIOnNewEventRecieved()
+	{
+		StartCoroutine(ExclamationBlinking());
+	}
 	public void exclamationBlink()
 	{
 		excCanvas.canblinking = true;
@@ -101,7 +105,16 @@ public class UIManager : SingletonMono<UIManager>
 	{
 		excCanvas.canblinking = false;
 	}
-
+	IEnumerator ExclamationBlinking()
+	{
+		int i = 0;
+		while (i++ <= 2)
+		{
+			exclamationBlink();
+			yield return new WaitForSeconds(0.3f);
+			exclamationNotBlink();
+		}
+	}
 	public void ShowEventMessage(int num)
 	{
 		EventWindow.text = EventText[num];
@@ -112,36 +125,34 @@ public class UIManager : SingletonMono<UIManager>
 		TaskWindow.text = TaskText[num];
 		TaskT.text = TaskTitle[num];
 	}
-	public void ProgressBarAdd()
+	public void ProgressBarUpd(int taskCnt)
 	{
-		ProgressValue += 0.166666666f;
+		ProgressValue = taskCnt * 0.166666666f;
 	}
-	public void ShowAChievementWindow(int num)
+	public void ShowAchievementWindow(int num)
 	{
 		AchievementWinObj.SetActive(true);
 		AchievementWindow.text = AchievementText[num];
 		AchievementT.text = AchievementTitle[num];
 		Time.timeScale = 0;
 	}
-
 	public void OnAchievementQuitClick()
 	{
 		AchievementWinObj.SetActive(false);
 		Time.timeScale = 1;
 	}
-	public void ShowEndTurnWindow( int addEnergynum  ,bool isDesert,int num)
-    {
+	public void ShowEndTurnWindow(Event thisEvent)
+	{
 		EndTurnObj.SetActive(true);
-		EndTurnEnergy.text = "+"+addEnergynum.ToString();
-		EndTurnDesert.gameObject.SetActive(isDesert);
-		EndTurnStroy.text = EndTurnText[num];
+		EndTurnEnergy.text = "+" + thisEvent.labourForceIncrease.ToString();
+		EndTurnDesert.gameObject.SetActive(!GameFlowCtrler.Instance.skipDesertify);
+		EndTurnStroy.text = thisEvent.displayContent;
 		Time.timeScale = 0;
-    }
+	}
 	public void OnEndTurnQuitClick()
-    {
+	{
 		Time.timeScale = 1;
 		EndTurnObj.SetActive(false);
-
 	}
 	public void OnMailButtonClick()
 	{
@@ -154,8 +165,8 @@ public class UIManager : SingletonMono<UIManager>
 			canShowEmail = false;
 			Time.timeScale = 0;
 		}
-
 	}
+
 	public void OnMailQuitClick()
 	{
 		Time.timeScale = 1;
@@ -179,35 +190,38 @@ public class UIManager : SingletonMono<UIManager>
 		ToGeEmailNum++;
 		canShowEmail = true;
 	}
-
-	public void ChangePlantNeedNum(int num1)
-    {
+	public void ChangePlantNeedNum(int num1)//plant consume
+	{
 		plantNeedNum.text = num1.ToString();
-    }
-	public void ChangeControlNeedNum(int num1)
+	}
+	public void ChangeControlNeedNum(int num1)//固沙消耗
 	{
 		ControlNeedNum.text = num1.ToString();
 	}
 	public void ChangeTotalNum(int num1)
-    {
-		Totalnum.text= num1.ToString();
-    }
+	{
+		Totalnum.text = num1.ToString();
+	}
 
 	public void OnEndTurnButtonClick()
-    {
+	{
+		GameFlowCtrler.Instance.NewRound();
+	}
 
-    }
-
-	public void changeCalendar(int Yearnum,string season)
-    {
+	public void changeCalendar(int Yearnum, int season)
+	{
+		string[] str = new string[]
+		{
+			"春","夏","秋"
+		};
 		calendarYear.text = "第" + changeNumToChinese(Yearnum) + "年";
-		calendarSeason.text = season;
-    }
+		calendarSeason.text = str[season];
+	}
 
 	public void addEnergyEffect(int changeEnergy)
-    {
+	{
 		StartCoroutine(changeMoney(changeEnergy));
-    }
+	}
 	IEnumerator changeMoney(int money)//����ǿ�Ǯ���Ǽ���������Ǽ�Ǯ���ǼӼӣ�money��д���Ǹı���
 	{
 		getMoneyObject.SetActive(true);
@@ -262,24 +276,11 @@ public class UIManager : SingletonMono<UIManager>
 				}
 			}
 		}
-		// Some Code for Test
-		if (Input.GetKeyDown(KeyCode.A))
-		{
-			ProgressBarAdd();
-		}
-		if (Input.GetKeyDown(KeyCode.B))
-		{
-			GetNewMail();
-		}
-		if(Input.GetKeyDown(KeyCode.C))
-        {
-			addEnergyEffect(10);
-        }
 	}
 	string changeNumToChinese(int num)
-    {
-		if(num==1)
-        {
+	{
+		if (num == 1)
+		{
 			return "一";
 		}
 		if (num == 2)
@@ -314,10 +315,11 @@ public class UIManager : SingletonMono<UIManager>
 		{
 			return "九";
 		}
-        else
-        {
+		else
+		{
 			return null;
-        }
+		}
 
 	}
+
 }

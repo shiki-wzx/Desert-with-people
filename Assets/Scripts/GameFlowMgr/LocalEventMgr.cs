@@ -9,6 +9,7 @@ public class LocalEventMgr : SingletonMono<LocalEventMgr>
 		GameFlowCtrler ctrler = FindObjectOfType<GameFlowCtrler>();
 		ctrler.labourForceMaximun = (int)(ctrler.labourForceMaximun + thisEvent.riseLabourForceMaximunBy);
 		ctrler.labourForce += (int)thisEvent.labourForceIncrease;
+		UIManager.Instance.addEnergyEffect((int)thisEvent.labourForceIncrease);
 		ctrler.labourForceCostCoef = thisEvent.labourForceCostMultiplier;
 		skipDesertify = !thisEvent.desertify;
 		if (thisEvent.blockRandomDegredate == true)
@@ -21,6 +22,7 @@ public class LocalEventMgr : SingletonMono<LocalEventMgr>
 			}
 			MapMgr.Instance.RandomDegrade(2, BlockType.PingDi, BlockType.ShaQiu, BlockType.ShaDi);
 		}
+		UIManager.Instance.ShowEventMessage(thisEvent.index);
 	}
 }
 

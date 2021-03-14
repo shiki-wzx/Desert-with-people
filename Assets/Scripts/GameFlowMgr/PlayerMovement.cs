@@ -1,67 +1,65 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PlayerActions;
+
+
 /// <summary>
-/// µ±ÒªÖ´ĞĞmoveµÄÊ±ºòµ÷ÓÃÕâ¸ö½Ó¿Ú
+/// å½“è¦æ‰§è¡Œ move çš„æ—¶å€™è°ƒç”¨è¿™ä¸ªæ¥å£
 /// </summary>
-public class PlayerMovement : SingletonMono<PlayerMovement>
-{
-	private void MapBlkClickHandle(BlkRtInfo info)
-	{
-		if (currAction == ActionType.None)
-			return;
-		if (info.HasActionQueued)
-			return;
+public class PlayerMovement : SingletonMono<PlayerMovement> {
+    public void ForceRelease() {
+        MapMgr.Instance.UnGreyAll();
+        currAction = ActionType.None;
+    }
 
-		if (currAction == ActionType.DesertHandle)
-		{
-			info.SandControl();
-			//todo : block recolor audiofx
-		}
-		else
-		{
-			info.Planting();
-			//todo : block recolor audiofx
-		}
 
-		currAction = ActionType.None;
-	}
+    private void MapBlkClickHandle(BlkRtInfo info) {
+        if(currAction == ActionType.None)
+            return;
+        if(info.HasActionQueued)
+            return;
 
-	//protected override void OnInstanceAwake()
-	//{}
+        int cost;
+        if(currAction == ActionType.DesertHandle) {
+            info.SandControl();
+            AudioMgr.Instance.PlayFx(AudioFxType.ControlSand);
+            cost = 10;
+        }
+        else {
+            info.Planting();
+            AudioMgr.Instance.PlayFx(AudioFxType.PlantTree);
+            cost = 30;
+        }
 
-	private void OnEnable() => CameraControl.Instance.ClickCallback += MapBlkClickHandle;
-	private void OnDisable() => CameraControl.Instance.ClickCallback -= MapBlkClickHandle;
+        GameFlowCtrler.Instance.labourForce -= (int)(cost * GameFlowCtrler.Instance.labourForceCostCoef);
 
-	private ActionType currAction = ActionType.None;
+        MapMgr.Instance.UnGreyAll();
+        currAction = ActionType.None;
+    }
 
-	public void Move(ActionType action)
-	{
-		int cost = 1;
-		switch (action)
-		{
-			case ActionType.DesertHandle:
-				{
-					if (currAction == ActionType.None)
-					{
-						currAction = ActionType.DesertHandle;
-						cost = 10;
-						//todo : switch mat
-						GameFlowCtrler.Instance.labourForce -= (int)(cost * GameFlowCtrler.Instance.labourForceCostCoef);
-					}
-					break;
-				}
-			case ActionType.Plant:
-				{
-					if (currAction == ActionType.None)
-					{
-						currAction = ActionType.Plant;
-						cost = 30;
-						GameFlowCtrler.Instance.labourForce -= (int)(cost * GameFlowCtrler.Instance.labourForceCostCoef);
-					}
-					break;
-				}
-		}
-	}
+
+    //protected override void OnInstanceAwake()
+    //{}
+
+    private void OnEnable() => CameraControl.Instance.ClickCallback += MapBlkClickHandle;
+    private void OnDisable() => CameraControl.Instance.ClickCallback -= MapBlkClickHandle;
+
+    private ActionType currAction = ActionType.None;
+
+
+    public void Move(ActionType action) {
+        switch(action) {
+        case ActionType.DesertHandle:
+            if(currAction == ActionType.None) {
+                currAction = ActionType.DesertHandle;
+                MapMgr.Instance.GreyExceptType(BlockType.ShaQiu, BlockType.ShaDi, BlockType.PingDi);
+            }
+            break;
+
+        case ActionType.Plant:
+            if(currAction == ActionType.None) {
+                currAction = ActionType.Plant;
+                MapMgr.Instance.GreyExceptType(BlockType.CaoDi);
+            }
+            break;
+        }
+    }
 }

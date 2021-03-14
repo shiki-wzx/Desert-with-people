@@ -53,6 +53,10 @@ public class CameraControl : SingletonMono<CameraControl> {
             panX = Input.GetAxis(MouseX) * panSpeed * Time.deltaTime;
             panY = Input.GetAxis(MouseY) * panSpeed * Time.deltaTime;
         }
+        else {
+            panX = -.1f * Input.GetAxis("MapPanX") * panSpeed * Time.deltaTime;
+            panY = -.1f * Input.GetAxis("MapPanY") * panSpeed * Time.deltaTime;
+        }
 
         transform.Translate(-panX, -panY, zoom);
         transform.position = transform.position.Clamp(new Vector3(bound.X[0], bound.Y[0], bound.Z[0]),
@@ -63,6 +67,10 @@ public class CameraControl : SingletonMono<CameraControl> {
         if(Input.GetMouseButton(MouseRight)) {
             pitch = Input.GetAxis(MouseY) * orbitSpeed * Time.deltaTime;
             yaw = Input.GetAxis(MouseX) * orbitSpeed * Time.deltaTime;
+        }
+        else {
+            pitch = .1f * Input.GetAxis("MapPitch") * orbitSpeed * Time.deltaTime;
+            yaw = .1f * Input.GetAxis("MapYaw") * orbitSpeed * Time.deltaTime;
         }
 
         transform.Rotate(0, yaw, 0, Space.World);

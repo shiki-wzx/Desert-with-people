@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 0
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.3207547, g: 0.2129257, b: 0.052652173, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: c56e28e54cac24b04ae3dd957d214534, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1045,6 +1045,10 @@ MonoBehaviour:
   panSpeed: 50
   orbitSpeed: 500
   zoomSpeed: 500
+  bound:
+    X: {x: -6, y: 6}
+    Y: {x: 1, y: 10}
+    Z: {x: -6, y: 12}
 --- !u!114 &288576447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2053,6 +2057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae643498d4bbbbc448109a7bce095298, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  greyMaterial: {fileID: 0}
 --- !u!4 &462976424
 Transform:
   m_ObjectHideFlags: 0
@@ -6958,10 +6963,12 @@ MonoBehaviour:
   letterInfo: {fileID: 11400000, guid: 90e53e48674cf204fb62971cef4cbb93, type: 2}
   localEventMgr: {fileID: 2063466061}
   eventSystem: {fileID: 2063466059}
+  skipDesertify: 0
   labourForceMaximun: 20
   labourForce: 20
   labourForceCostCoef: 1
   currentSeason: 0
+  taskAccomplished: 
 --- !u!114 &2063466061
 MonoBehaviour:
   m_ObjectHideFlags: 0
