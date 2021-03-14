@@ -4,6 +4,7 @@ public partial class BlkRtInfo {
             return;
         HasActionQueued = true;
         UpdateGreenDeltaBy(1);
+        // todo: display man
     }
 
 
@@ -11,7 +12,8 @@ public partial class BlkRtInfo {
         if(HasActionQueued || BlkParam.Type != BlockType.CaoDi)
             return;
         HasActionQueued = true;
-        SetBlkInfo(BlockType.YouMiao);
+        SetBlkType(BlockType.YouMiao);
+        // todo: display man
     }
 
 
@@ -38,15 +40,13 @@ public partial class BlkRtInfo {
     public void ClearGreenDelta() {
         HasActionQueued = false;
         GreenDelta = 0;
+        // todo: clear man
     }
-
-
-    private MapMgr mapMgr;
 
 
     private void Awake() {
         ClearGreenDelta();
-        mapMgr = GetComponentInParent<MapMgr>();
+        var mapMgr = GetComponentInParent<MapMgr>();
         mapMgr.RegisterBlk(this);
     }
 }

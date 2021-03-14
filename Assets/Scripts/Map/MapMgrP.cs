@@ -16,14 +16,14 @@ public partial class MapMgr {
             if(Random.value > prob)
                 continue;
             --numReq;
-            candidates[numAva - 1].SetBlkInfo(dstType);
+            candidates[numAva - 1].SetBlkType(dstType);
         }
         return true;
     }
 
 
     /// <summary> Helper function for achievements </summary>
-    /// todo: optimization
+    /// todo: optimize
     public MapStatInfo GetStatus() {
         var msInfo = new MapStatInfo {
             AnyNotDesertBlkWhoseAdjDesertLt4 = false,
@@ -59,6 +59,26 @@ public partial class MapMgr {
         }
 
         return msInfo;
+    }
+
+
+    [SerializeField] private Material greyMaterial;
+
+
+    public void GreyByType(params BlockType[] types) {
+        foreach(var blk in childBlks) {
+            if(!blk.BlkParam.Type.In(types))
+                continue;
+            foreach(var childRenderer in blk.GetComponentsInChildren<MeshRenderer>())
+                childRenderer.material = greyMaterial;
+        }
+    }
+
+
+    // todo: optimize
+    public void UnGreyAll() {
+        foreach(var blk in childBlks)
+            blk.SetBlkType(blk.BlkParam.Type);
     }
 }
 

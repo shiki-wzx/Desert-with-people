@@ -7,6 +7,7 @@ public partial class BlkRtInfo : MonoBehaviour {
     /// <remarks> This is set in prefab. </remarks>
     [SerializeField] private BlockTypeDict blockTypeDict;
 
+
     /// <summary>
     /// Block index. Set by GenBlkPh. Starts from 0. Usually no need to change.
     /// </summary>
@@ -24,15 +25,8 @@ public partial class BlkRtInfo : MonoBehaviour {
     /// <summary>
     /// Update block. This will update UI at the same time.
     /// </summary>
-    public void SetBlkInfo(BlockType type) => SetBlkInfo(type, BlkIdx);
-
-    /// <summary>
-    /// Typically called by GenBlkPh.
-    /// </summary>
-    public void SetBlkInfo(BlockType type, int idx) {
-        BlkIdx = idx;
+    public void SetBlkType(BlockType type) {
         BlkParam = blockTypeDict[type];
-        gameObject.name = $"Hexagon {BlkIdx}";
         var children = (from Transform child in transform select child.gameObject).ToList();
         foreach(var child in children)
             Destroy(child.gameObject);
@@ -40,10 +34,21 @@ public partial class BlkRtInfo : MonoBehaviour {
     }
 
 
+    /// <summary>
+    /// Typically called by GenBlkPh.
+    /// </summary>
+    public void SetBlkInfo(BlockType type, int idx) {
+        BlkIdx = idx;
+        gameObject.name = $"Hexagon {BlkIdx}";
+        SetBlkType(type);
+    }
+
+
     // todo: hard coded; refer to same source instead
     private const float BlkWidth = .66f, BlkHeight = .2f;
 
     private readonly RaycastHit[] hitRst = new RaycastHit[1];
+
 
     /// <summary>
     /// Get adjacent blocks.

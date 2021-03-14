@@ -1,89 +1,80 @@
 using System;
+using Sirenix.Utilities;
 using UnityEngine;
-using Sirenix.OdinInspector;
 
-// todo: bound this
-// todo: smooth this
-public struct CamLimit
-{
-	public Vector2 zClamp;//translate
-	public Vector2 xClamp;//translate
-	public Vector2 yClamp;
-	public Vector2 yawClamp;//rotation
+
+[Serializable]
+public class CameraBound {
+    public Vector2 X = new Vector2(-6, 6);
+    public Vector2 Y = new Vector2(1, 10);
+    public Vector2 Z = new Vector2(-6, 12);
+
+    // no need to clamp rotation (probably)
+    //public Vector2 Yaw;
 }
-public class CameraControl : SingletonMono<CameraControl>
-{
-	//[SerializeField] private GameObject highlightPrefab;
-
-	[SerializeField] private float panSpeed = 50;
-	[SerializeField] private float orbitSpeed = 500;
-	[SerializeField] private float zoomSpeed = 500;
-	[ShowInInspector]
-	CamLimit limit;
-	
-
-	/// <summary>
-	/// Listen to this to handel mouse click on block.
-	/// </summary>
-	public Action<BlkRtInfo> ClickCallback;
 
 
-	private new Camera camera;
+// todo: smooth move
+public class CameraControl : SingletonMono<CameraControl> {
+    [SerializeField] private float panSpeed = 45;
+    [SerializeField] private float orbitSpeed = 450;
+    [SerializeField] private float zoomSpeed = 450;
+
+    [SerializeField] private CameraBound bound;
 
 
-	protected override void OnInstanceAwake()
-	{
-		camera = GetComponent<Camera>();
-
-		// todo: test code
-		ClickCallback += delegate (BlkRtInfo info)
-		{
-			//var hl = Instantiate(highlightPrefab, info.transform, false);
-			//Destroy(hl, 1);
-			Debug.Log($"#{info.BlkIdx} {info.BlkParam.Type} clicked");
-		};
-	}
-
-	private const string MouseX = "Mouse X", MouseY = "Mouse Y", MouseScroll = "Mouse ScrollWheel";
-	private const int MouseLeft = 0, MouseRight = 1, MouseMiddle = 2;
+    /// <summary> Listen to this to handel mouse click on block. </summary>
+    public Action<BlkRtInfo> ClickCallback;
 
 
-	private void LateUpdate()
-	{
-		var zoom = Input.GetAxis(MouseScroll) * zoomSpeed * Time.deltaTime;
-		var panX = 0f;
-		var panY = 0f;
-		//zoom = Mathf.Clamp(zoom, limit.zClamp[0], limit.zClamp[1]);
-
-		if (Input.GetMouseButton(MouseMiddle))
-		{
-			panX = Input.GetAxis(MouseX) * panSpeed * Time.deltaTime;
-			panY = Input.GetAxis(MouseY) * panSpeed * Time.deltaTime;
-		}
-
-		transform.Translate(-panX, -panY, zoom);
-
-		var pitch = 0f;
-		var yaw = 0f;
-		if (Input.GetMouseButton(MouseRight))
-		{
-			pitch = Input.GetAxis(MouseY) * orbitSpeed * Time.deltaTime;
-			yaw = Input.GetAxis(MouseX) * orbitSpeed * Time.deltaTime;
-		}
-
-		transform.Rotate(0, yaw, 0, Space.World);
-		transform.Rotate(-pitch, 0, 0); // Space.Self
+    private new Camera camera;
 
 
-		if (Input.GetMouseButtonDown(MouseLeft))
-		{
-			var hasHit = Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition),
-										 out var hitInfo, 100f, LayerMask.GetMask("BlkLayer"));
-			if (hasHit)
-			{
-				var rtInfo = hitInfo.collider.GetComponentInParent<BlkRtInfo>();
-				ClickCallback?.Invoke(rtInfo);
-			}
-		}
-	}
+    protected override void OnInstanceAwake() {
+        camera = GetComponent<Camera>();
+
+        ClickCallback += delegate(BlkRtInfo info) {
+            //var hl = Instantiate(highlightPrefab, info.transform, false);
+            //Destroy(hl, 1);
+            Debug.Log($"#{info.BlkIdx} {info.BlkParam.Type} clicked");
+        };
+    }
+
+
+    private const string MouseX = "Mouse X", MouseY = "Mouse Y", MouseScroll = "Mouse ScrollWheel";
+    private const int MouseLeft = 0, MouseRight = 1, MouseMiddle = 2;
+
+
+    private void LateUpdate() {
+        var zoom = Input.GetAxis(MouseScroll) * zoomSpeed * Time.deltaTime;
+        var panX = 0f;
+        var panY = 0f;
+        if(Input.GetMouseButton(MouseMiddle)) {
+            panX = Input.GetAxis(MouseX) * panSpeed * Time.deltaTime;
+            panY = Input.GetAxis(MouseY) * panSpeed * Time.deltaTime;
+        }
+
+        transform.Translate(-panX, -panY, zoom);
+        transform.position = transform.position.Clamp(new Vector3(bound.X[0], bound.Y[0], bound.Z[0]),
+                                                      new Vector3(bound.X[1], bound.Y[1], bound.Z[1]));
+
+        var pitch = 0f;
+        var yaw = 0f;
+        if(Input.GetMouseButton(MouseRight)) {
+            pitch = Input.GetAxis(MouseY) * orbitSpeed * Time.deltaTime;
+            yaw = Input.GetAxis(MouseX) * orbitSpeed * Time.deltaTime;
+        }
+
+        transform.Rotate(0, yaw, 0, Space.World);
+        transform.Rotate(-pitch, 0, 0); // Space.Self
+
+        if(Input.GetMouseButtonDown(MouseLeft)) {
+            var hasHit = Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition),
+                                         out var hitInfo, 100f, LayerMask.GetMask("BlkLayer"));
+            if(hasHit) {
+                var rtInfo = hitInfo.collider.GetComponentInParent<BlkRtInfo>();
+                ClickCallback?.Invoke(rtInfo);
+            }
+        }
+    }
 }

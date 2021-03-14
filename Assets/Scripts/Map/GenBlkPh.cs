@@ -22,26 +22,24 @@ public class GenBlkPh : MonoBehaviour {
             (-3, 1, 4), (-2, 1, 5), (-1, 0, 6), (0, 0, 6), (1, 0, 5), (2, 1, 4)
         };
 
-        //var types = new[] {
-        //    BlockType.ShaQiu, BlockType.ShaQiu, BlockType.ShaDi, BlockType.ShaDi,
-        //    BlockType.ShaDi, BlockType.ShaDi, BlockType.PingDi, BlockType.ShaQiu, BlockType.ShaQiu,
-        //    BlockType.ShaDi, BlockType.ShaQiu, BlockType.ZhiShaZhan, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaDi,
-        //    BlockType.ShaQiu, BlockType.ShaDi, BlockType.PingDi, BlockType.ShaDi, BlockType.PingDi, BlockType.ShaQiu,
-        //    BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaQiu, BlockType.ShaDi,
-        //    BlockType.ShaQiu, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaQiu
-        //};
-
-
-        // debug test code
         var types = new[] {
-            BlockType.ShaQiu, BlockType.ShaQiu, BlockType.PingDi, BlockType.CaoDi,
-            BlockType.YouMiao, BlockType.ZhiWu, BlockType.PingDi, BlockType.ShaQiu, BlockType.ShaQiu,
+            BlockType.ShaQiu, BlockType.ShaQiu, BlockType.ShaDi, BlockType.ShaDi,
+            BlockType.ShaDi, BlockType.ShaDi, BlockType.PingDi, BlockType.ShaQiu, BlockType.ShaQiu,
             BlockType.ShaDi, BlockType.ShaQiu, BlockType.ZhiShaZhan, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaDi,
             BlockType.ShaQiu, BlockType.ShaDi, BlockType.PingDi, BlockType.ShaDi, BlockType.PingDi, BlockType.ShaQiu,
             BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaQiu, BlockType.ShaDi,
             BlockType.ShaQiu, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaQiu
         };
 
+        // debug test code
+        //var types = new[] {
+        //    BlockType.ShaQiu, BlockType.ShaQiu, BlockType.PingDi, BlockType.CaoDi,
+        //    BlockType.YouMiao, BlockType.ZhiWu, BlockType.PingDi, BlockType.ShaQiu, BlockType.ShaQiu,
+        //    BlockType.ShaDi, BlockType.ShaQiu, BlockType.ZhiShaZhan, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaDi,
+        //    BlockType.ShaQiu, BlockType.ShaDi, BlockType.PingDi, BlockType.ShaDi, BlockType.PingDi, BlockType.ShaQiu,
+        //    BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaQiu, BlockType.ShaDi,
+        //    BlockType.ShaQiu, BlockType.ShaDi, BlockType.ShaDi, BlockType.ShaQiu
+        //};
 
         var blkIdx = 0;
 
