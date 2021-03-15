@@ -86,8 +86,7 @@ public class CameraControl : SingletonMono<CameraControl> {
         }
 
         // exit game
-        if(Input.GetKeyDown(KeyCode.Escape)) {
+        if(Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
-        }
     }
 }

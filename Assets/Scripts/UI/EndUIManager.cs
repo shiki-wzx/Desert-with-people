@@ -1,48 +1,64 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class EndUIManager : MonoBehaviour
-{
-    // Start is called before the first frame update
-    public CanvasGroup blackimage;
-    public bool toblack;
-    public GameObject Ed1;
-    public GameObject Ed2;
-    public float Speed;
-    void Start()
-    {
-        Speed = 0.5f;
-        StartCoroutine(EndUI());
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(toblack)
-        {
-            Debug.Log("black");
-            if(blackimage.alpha<1)
-            blackimage.alpha+=Speed* Time.deltaTime ;
-        }
-        else
-        {
-            Debug.Log("white");
-            if (blackimage.alpha > 0)
-                blackimage.alpha -=Speed* Time.deltaTime;
+public class EndUIManager : MonoBehaviour {
+    [SerializeField] private Image blackMask;
+    [SerializeField] private GameObject ed1, ed2, credit;
+
+
+    private IEnumerator ToLight() {
+        const float speed = .5f;
+        var color = blackMask.color;
+        while(color.a > 1e-5) {
+            color.a -= speed * Time.deltaTime;
+            color.a = Mathf.Clamp01(color.a);
+            blackMask.color = color;
+            yield return null;
         }
     }
-    IEnumerator  EndUI()
-    {
-        toblack = false;
-        Ed1.SetActive(true);
-        yield return new WaitForSeconds(6f);
-        Speed = 1;
-        toblack = true;
-        yield return new WaitForSeconds(1f);
-        Ed1.SetActive(false);
-        Ed2.SetActive(true);
-        toblack = false;
 
+
+    private IEnumerator ToDark() {
+        const float speed = .5f;
+        var color = blackMask.color;
+        while(1 - color.a > 1e-5) {
+            color.a += speed * Time.deltaTime;
+            color.a = Mathf.Clamp01(color.a);
+            blackMask.color = color;
+            yield return null;
+        }
+    }
+
+
+    private IEnumerator PlayED() {
+        yield return new WaitForSeconds(1);
+        ed1.SetActive(true);
+        yield return StartCoroutine(ToLight());
+        yield return new WaitForSeconds(6);
+        yield return StartCoroutine(ToDark());
+        ed1.SetActive(false);
+
+        yield return new WaitForSeconds(1);
+        ed2.SetActive(true);
+        yield return StartCoroutine(ToLight());
+        yield return new WaitForSeconds(6);
+        yield return StartCoroutine(ToDark());
+        ed2.SetActive(false);
+
+        yield return new WaitForSeconds(1);
+        credit.SetActive(true);
+        StartCoroutine(ToLight());
+    }
+
+
+    private void Start() {
+        credit.GetComponentInChildren<Button>().onClick.AddListener(Application.Quit);
+
+        ed2.SetActive(false);
+        credit.SetActive(false);
+        blackMask.color = Color.black;
+        StartCoroutine(PlayED());
     }
 }

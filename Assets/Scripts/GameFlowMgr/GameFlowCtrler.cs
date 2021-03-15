@@ -145,7 +145,7 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	[Button]
 	public void NewRound()
 	{
-		//ÂÖ´ÎÁ÷³Ì£ºÔÚµ±Ç°ÂÖ´Î½áÊøÇ°Ö´ĞĞµ±Ç°ÂÖ´ÎµÄÊÂ¼ş,È»ºó¸üĞÂµØ¿é£¬È»ºó²âÊÔ³É¾Í£¬È»ºóµ÷Õû¼¾½Ú£¬È»ºóÂÖ´Î+1£¨µ±Ç°ÂÖ´Î½áÊø£©£¬ÀÍ¶¯Á¦»Ø¸´£¬Ö´ĞĞÏÂÒ»ÂÖµÄËæ»úÊÂ¼ş
+		//è½®æ¬¡æµç¨‹ï¼šåœ¨å½“å‰è½®æ¬¡ç»“æŸå‰æ‰§è¡Œå½“å‰è½®æ¬¡çš„äº‹ä»¶,ç„¶åæ›´æ–°åœ°å—ï¼Œç„¶åæµ‹è¯•æˆå°±ï¼Œç„¶åè°ƒæ•´å­£èŠ‚ï¼Œç„¶åè½®æ¬¡+1ï¼ˆå½“å‰è½®æ¬¡ç»“æŸï¼‰ï¼ŒåŠ³åŠ¨åŠ›å›å¤ï¼Œæ‰§è¡Œä¸‹ä¸€è½®çš„éšæœºäº‹ä»¶
 		int eventIndex = ExcuteEvent(round.roundCount, false);
 		UpdateBlkInfo();
 		int achiId=
@@ -159,6 +159,8 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		round++;//=================================================================
 		LabourForceMaximunIncrease(round.roundCount);
 		LabourForceRecover();
+		if(MapMgr.Instance.CountBlk(BlockType.ShaQiu, BlockType.ShaDi) > 27)
+			localEventMgr.ExcuteEvent(eventPool[2], out _);
 		// on new round begin
 		ExcuteEvent(round.roundCount, true);
 	}
@@ -229,7 +231,7 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		achi.AnyNotDesertBlkWhoseAdjDesertEq0 = mapStatus.AnyNotDesertBlkWhoseAdjDesertEq0;
 		achi.AnyNotDesertBlkWhoseAdjDesertLt4 = mapStatus.AnyNotDesertBlkWhoseAdjDesertLt4;
 		achi.letterCount = letterInfo.currentLetterCount;
-		achi.greenBlockReach = MapMgr.Instance.CountBlk(BlockType.CaoDi, BlockType.YouMiao, BlockType.ZhiWu);//ÕâÀï´æÒÉ£¬ÖÎÉ³Õ¾Ëã²»ËãÂÌÉ«µØ
+		achi.greenBlockReach = MapMgr.Instance.CountBlk(BlockType.CaoDi, BlockType.YouMiao, BlockType.ZhiWu);//è¿™é‡Œå­˜ç–‘ï¼Œæ²»æ²™ç«™ç®—ä¸ç®—ç»¿è‰²åœ°
 		achi.noDegredationRoundCount = round.noDegredationRoundCount;
 		achi.SeedingTriggered = mapUpdInfo.SeedingTriggered;
 		return achi;
@@ -253,7 +255,7 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		int eventIndex = -1;
 		if (!inRound)
 		{
-			//ÏÈ¼ìË÷Ö´ĞĞÌØ¶¨ÊÂ¼ş
+			//å…ˆæ£€ç´¢æ‰§è¡Œç‰¹å®šäº‹ä»¶
 			foreach (var thisEvent in eventPool)
 			{
 				if (thisEvent.property == LocalEventProperty.OnRoundEnd)
@@ -273,11 +275,11 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		}
 		else
 		{
-			//»ØºÏ¿ªÊ¼£¬Ö´ĞĞËæ»úÊÂ¼ş
+			//å›åˆå¼€å§‹ï¼Œæ‰§è¡Œéšæœºäº‹ä»¶
 			eventIndex = Random.Range(0, 12);
 			LocalEventMgr.Instance.ExcuteEvent(InRoundEventPool[eventIndex], out skipDesertify);
 		}
-		//µÚÈı·âĞÅµÄ»ØºÏ£¬ÌØÅĞ
+		//ç¬¬ä¸‰å°ä¿¡çš„å›åˆï¼Œç‰¹åˆ¤
 		if (letterInfo.currentLetterCount == 3 && !thirdLetterTriggered)
 		{
 			eventIndex = 4;
