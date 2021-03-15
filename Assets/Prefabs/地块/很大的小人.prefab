@@ -96,6 +96,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4912553544623812493}
+  - component: {fileID: -3617463537342026041}
+  - component: {fileID: -4685846527377595765}
   m_Layer: 0
   m_Name: "\u5F88\u5927\u7684\u5C0F\u4EBA"
   m_TagString: Untagged
@@ -118,3 +120,58 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &-3617463537342026041
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4912553544623812530}
+  m_Mesh: {fileID: -2432090755550338912, guid: 050e524139a8c1c48b0269e8faec6d85, type: 3}
+--- !u!23 &-4685846527377595765
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4912553544623812530}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: b25b0c9137a48d14fa8ef694099d40f5, type: 2}
+  - {fileID: 2100000, guid: 5a07d0fadf09a7a4e8fc5e2e06a7b65c, type: 2}
+  - {fileID: 2100000, guid: 4261d485373dfbe418cfec5e5f4d8824, type: 2}
+  - {fileID: 2100000, guid: 259981564c576af4d82ff4740201fa5d, type: 2}
+  - {fileID: 2100000, guid: 92f7c00da67407043bf30368f3e32bb0, type: 2}
+  - {fileID: 2100000, guid: 3f87e937844735b459525413290b32a0, type: 2}
+  - {fileID: 2100000, guid: f118eed3e22927540974b5d51633c5ba, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

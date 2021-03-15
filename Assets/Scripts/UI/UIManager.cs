@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : SingletonMono<UIManager>
 {
@@ -46,6 +47,8 @@ public class UIManager : SingletonMono<UIManager>
 	//mail
 	public GameObject mailRedPoint;
 
+	public GameObject newPlayer;
+
 	public Text plantNeedNum;
 	public Text ControlNeedNum;
 	public Text Totalnum;
@@ -61,6 +64,9 @@ public class UIManager : SingletonMono<UIManager>
 	public float dialogfadespeed;
 	public float moneySpeed;
 	public float Moneytargethigh;
+
+	public string loadToFinalScene;
+
 	private void Start()
 	{
 		ProgressBar.value = 0;
@@ -69,9 +75,13 @@ public class UIManager : SingletonMono<UIManager>
 		ToGeEmailNum = -1;
 		ToMeiEmailNum = 0;
 	}
+	public void OnNewPlayerQuit()
+    {
+		newPlayer.SetActive(false);
+    }
 	public void OnPlantTreeClick()
 	{
-		if (FindObjectOfType<GameFlowCtrler>().labourForce < (int)PlayerActions.ActionType.Plant)
+		if (FindObjectOfType<GameFlowCtrler>().labourForce < (int)GameFlowCtrler.Instance.mp[PlayerActions.ActionType.Plant])
 		{
 			Debug.LogWarning("Not enough labourforce.");
 		}
@@ -83,7 +93,7 @@ public class UIManager : SingletonMono<UIManager>
 	}
 	public void OnHandlingDesert()
 	{
-		if (FindObjectOfType<GameFlowCtrler>().labourForce < (int)PlayerActions.ActionType.DesertHandle)
+		if (FindObjectOfType<GameFlowCtrler>().labourForce < (int)GameFlowCtrler.Instance.mp[PlayerActions.ActionType.DesertHandle])
 		{
 			Debug.LogWarning("Not enough!");
 		}
@@ -122,8 +132,8 @@ public class UIManager : SingletonMono<UIManager>
 	}
 	public void ShowTaskMessage(int num)
 	{
+		Debug.Log(num);
 		TaskWindow.text = TaskText[num];
-		TaskT.text = TaskTitle[num];
 	}
 	public void ProgressBarUpd(int taskCnt)
 	{
@@ -131,27 +141,23 @@ public class UIManager : SingletonMono<UIManager>
 	}
 	public void ShowAchievementWindow(int num)
 	{
-		AchievementWinObj.SetActive(true);
-		AchievementWindow.text = AchievementText[num];
-		AchievementT.text = AchievementTitle[num];
-		Time.timeScale = 0;
+		//AchievementWinObj.SetActive(true);
+		//AchievementWindow.text = AchievementText[num];
+		//AchievementT.text = AchievementTitle[num];
 	}
 	public void OnAchievementQuitClick()
 	{
 		AchievementWinObj.SetActive(false);
-		Time.timeScale = 1;
 	}
 	public void ShowEndTurnWindow(Event thisEvent)
 	{
 		EndTurnObj.SetActive(true);
-		EndTurnEnergy.text = "+" + thisEvent.labourForceIncrease.ToString();
+		//EndTurnEnergy.text = "+" + thisEvent.labourForceIncrease.ToString();
 		EndTurnDesert.gameObject.SetActive(!GameFlowCtrler.Instance.skipDesertify);
 		EndTurnStroy.text = thisEvent.displayContent;
-		Time.timeScale = 0;
 	}
 	public void OnEndTurnQuitClick()
 	{
-		Time.timeScale = 1;
 		EndTurnObj.SetActive(false);
 	}
 	public void OnMailButtonClick()
@@ -163,13 +169,11 @@ public class UIManager : SingletonMono<UIManager>
 			EmailPaper.SetActive(true);
 			EmailText.text = ToGe[ToGeEmailNum];
 			canShowEmail = false;
-			Time.timeScale = 0;
 		}
 	}
 
 	public void OnMailQuitClick()
 	{
-		Time.timeScale = 1;
 		EmailPaper.SetActive(false);
 	}
 
@@ -222,7 +226,7 @@ public class UIManager : SingletonMono<UIManager>
 	{
 		StartCoroutine(changeMoney(changeEnergy));
 	}
-	IEnumerator changeMoney(int money)//����ǿ�Ǯ���Ǽ���������Ǽ�Ǯ���ǼӼӣ�money��д���Ǹı���
+	IEnumerator changeMoney(int money)
 	{
 		getMoneyObject.SetActive(true);
 		Vector3 v3 = getMoneyObject.GetComponent<RectTransform>().position;
@@ -264,8 +268,6 @@ public class UIManager : SingletonMono<UIManager>
 		{
 			if (Mathf.Abs(ProgressBar.value - 0.166666f * i) < 0.01)
 			{
-				// Debug.Log(Mathf.Abs(ProgressBar.value - (1 / 6) * i));
-				Debug.Log("cao");
 				if (flagNotActive[i - 1])
 				{
 					flagNotActive[i - 1] = false;
@@ -276,6 +278,12 @@ public class UIManager : SingletonMono<UIManager>
 				}
 			}
 		}
+		if(TreeAndGlass.value==1)
+        {
+			SceneManager.LoadScene(loadToFinalScene);
+        }
+		ChangeTotalNum(FindObjectOfType<GameFlowCtrler>().labourForce);
+
 	}
 	string changeNumToChinese(int num)
 	{

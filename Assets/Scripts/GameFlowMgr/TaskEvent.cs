@@ -10,3 +10,9 @@ public class TaskEvent : ScriptableObject
 	public int targetNotDesert;
 	public bool accomplished = false;
 }
+
+public struct TaskReq
+{
+	public int NotDesertReach;
+	public int GreenBlockReach;
+}

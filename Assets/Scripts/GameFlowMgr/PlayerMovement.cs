@@ -21,12 +21,12 @@ public class PlayerMovement : SingletonMono<PlayerMovement> {
         if(currAction == ActionType.DesertHandle) {
             info.SandControl();
             AudioMgr.Instance.PlayFx(AudioFxType.ControlSand);
-            cost = 10;
+            cost = GameFlowCtrler.Instance.mp[ActionType.DesertHandle];
         }
         else {
             info.Planting();
             AudioMgr.Instance.PlayFx(AudioFxType.PlantTree);
-            cost = 30;
+            cost = GameFlowCtrler.Instance.mp[ActionType.Plant];
         }
 
         GameFlowCtrler.Instance.labourForce -= (int)(cost * GameFlowCtrler.Instance.labourForceCostCoef);

@@ -78,13 +78,13 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	[SerializeField]
 	public int labourForceMaximun = 100;
 	[SerializeField]
-	public int labourForce = 10;
+	public int labourForce = 50;
 	public float labourForceCostCoef = 1.0f;
 	[SerializeField]
 	public Season currentSeason;
 	public List<bool> taskAccomplished;
 	//public currentCompletation StateInformation = new currentCompletation();
-	Dictionary<PlayerActions.ActionType, int> mp;
+	public Dictionary<PlayerActions.ActionType, int> mp=new Dictionary<PlayerActions.ActionType, int>();
 	[Button]
 	public void ReadInInfo()
 	{
@@ -121,7 +121,12 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	}
 	private void Start()
 	{
+		var a = UIManager.Instance;
 		m_UIMgr.GetNewMail();
+		a.ChangePlantNeedNum((int)(mp[PlayerActions.ActionType.Plant] * labourForceCostCoef));
+		a.ChangeControlNeedNum((int)(mp[PlayerActions.ActionType.DesertHandle] * labourForceCostCoef));
+		UIManager.Instance.ShowTaskMessage(0);
+
 		m_camCtrl = FindObjectOfType<CameraControl>();
 	}
 	void RegisterEvents(EventSettings eventSettings)
@@ -140,20 +145,18 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	public void NewRound()
 	{
 		//轮次流程：在当前轮次结束前执行当前轮次的事件,然后更新地块，然后测试成就，然后调整季节，然后轮次+1（当前轮次结束），劳动力回复，执行下一轮的随机事件
-		if (round.roundCount == 0)
-		{
-			UIManager.Instance.ShowTaskMessage(0);
-		}
 		int eventIndex = ExcuteEvent(round.roundCount, false);
 		UpdateBlkInfo();
 		int achiId=
 		AchivementTest(AchivementUpd());
+		TaskTest(TaskUpd());
 		SeasonAdjust(round.roundCount);
 		int year = (round.roundCount / 12);
+		Debug.Log(year);
 		//on last round end
 		UIUpd(eventIndex,achiId);
 		round++;//=================================================================
-		LabourForceMaximunIncrease(year);
+		LabourForceMaximunIncrease(round.roundCount);
 		LabourForceRecover();
 		// on new round begin
 		ExcuteEvent(round.roundCount, true);
@@ -162,32 +165,61 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	{
 		var a = UIManager.Instance;
 		UIManager.Instance.GetNewMail();
-		UIManager.Instance.changeCalendar((round.roundCount / 12), (int)currentSeason);
+		UIManager.Instance.changeCalendar((round.roundCount / 12)+1, (int)currentSeason);
 		a.ChangePlantNeedNum((int)(mp[PlayerActions.ActionType.Plant] * labourForceCostCoef));
 		a.ChangeControlNeedNum((int)(mp[PlayerActions.ActionType.DesertHandle] * labourForceCostCoef));
 		a.ShowEndTurnWindow(eventPool[eventIndex]);
 		a.ShowAchievementWindow(achievementIndex);
 		int accomplishedTaskCount = 0;
-		foreach (var i in taskAccomplished) accomplishedTaskCount += i == true ? 1 : 0;
+		foreach (var i in taskAccomplished)
+		{	if(i)
+            {
+				accomplishedTaskCount++;
+            }
+		}
+
 		a.ProgressBarUpd(accomplishedTaskCount);
 		UIManager.Instance.GUIOnNewEventRecieved();
-
+		Debug.Log("acTask" + accomplishedTaskCount);
 		//under fix
-		UIManager.Instance.ShowTaskMessage(accomplishedTaskCount + 1);
+	    UIManager.Instance.ShowTaskMessage(accomplishedTaskCount);
+		
 		//todo accordingto the return value show
 	}
 
 	//todo tasktest:if reached    taskaccomplished [index] set true    call audio
-	public void TaskTest()
+	public void LabourForceMaximunIncrease(int roundcount)
 	{
-		if (round.roundCount != 0) UIManager.Instance.ShowSendEmail();
-	}
-	public void LabourForceMaximunIncrease(int year)
-	{
-		if (year != (int)round.roundCount / 12)
-		{
+		if( roundcount>0&&roundcount%12==0)
+        {
 			labourForceMaximun += 50;
-		}
+			Debug.Log("new year");
+        }
+	}
+	TaskReq TaskUpd()
+    {
+		TaskReq taskreq = new TaskReq();
+		taskreq.GreenBlockReach = MapMgr.Instance.CountBlk(BlockType.CaoDi, BlockType.YouMiao, BlockType.ZhiWu);
+		taskreq.NotDesertReach = MapMgr.Instance.CountBlk(BlockType.CaoDi, BlockType.YouMiao, BlockType.ZhiWu, BlockType.PingDi,BlockType.ZhiShaZhan);
+		return taskreq;
+    }
+	int TaskTest(TaskReq taskreq)
+    {
+		int index = 0;
+		for(int i=0;i<EventSystem.Instance.tasks.Count;i++)
+        {
+			TasksInfo task = EventSystem.Instance.tasks[i];
+			if(taskAccomplished[task.taskIndex]==false)
+            {
+				if(taskreq.GreenBlockReach>=task.targetGreen&&taskreq.NotDesertReach>=task.targetNotDesert)
+                {
+					taskAccomplished[i] =true;
+					UIManager.Instance.ShowSendEmail();
+					index = i;
+                }
+            }
+        }
+		return index;
 	}
 	AchivementReq AchivementUpd()
 	{

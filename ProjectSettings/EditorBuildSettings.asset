@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Shiki_Scene/GameStartScene.unity
+    guid: e9eb848ef426f414b980cc203d3f38a7
+  - enabled: 1
     path: Assets/Scenes/Shiki_Scene/Gaming Scene.unity
     guid: 9c56dc59b158ddb479fb928724d4179a
+  - enabled: 1
+    path: Assets/Scenes/Shiki_Scene/GameEndScene.unity
+    guid: 8096fa5fbc34c3849b4546a6431effc9
   m_configObjects: {}
