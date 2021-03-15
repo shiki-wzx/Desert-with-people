@@ -17,19 +17,22 @@ public class PlayerMovement : SingletonMono<PlayerMovement> {
         if(info.HasActionQueued)
             return;
 
-        int cost;
         if(currAction == ActionType.DesertHandle) {
-            info.SandControl();
-            AudioMgr.Instance.PlayFx(AudioFxType.ControlSand);
-            cost = GameFlowCtrler.Instance.mp[ActionType.DesertHandle];
+            var success = info.SandControl();
+            if(success) {
+                AudioMgr.Instance.PlayFx(AudioFxType.ControlSand);
+                var cost = GameFlowCtrler.Instance.mp[ActionType.DesertHandle];
+                GameFlowCtrler.Instance.labourForce -= (int)(cost * GameFlowCtrler.Instance.labourForceCostCoef);
+            }
         }
         else {
-            info.Planting();
-            AudioMgr.Instance.PlayFx(AudioFxType.PlantTree);
-            cost = GameFlowCtrler.Instance.mp[ActionType.Plant];
+            var success = info.Planting();
+            if(success) {
+                AudioMgr.Instance.PlayFx(AudioFxType.PlantTree);
+                var cost = GameFlowCtrler.Instance.mp[ActionType.Plant];
+                GameFlowCtrler.Instance.labourForce -= (int)(cost * GameFlowCtrler.Instance.labourForceCostCoef);
+            }
         }
-
-        GameFlowCtrler.Instance.labourForce -= (int)(cost * GameFlowCtrler.Instance.labourForceCostCoef);
 
         MapMgr.Instance.UnGreyAll();
         currAction = ActionType.None;

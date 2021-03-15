@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.SceneManagement;
 public class StateInfo
 {
 	public BlockType type;
@@ -164,10 +165,8 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	public void UIUpd(int eventIndex,int achievementIndex)
 	{
 		var a = UIManager.Instance;
-		UIManager.Instance.GetNewMail();
+
 		UIManager.Instance.changeCalendar((round.roundCount / 12)+1, (int)currentSeason);
-		a.ChangePlantNeedNum((int)(mp[PlayerActions.ActionType.Plant] * labourForceCostCoef));
-		a.ChangeControlNeedNum((int)(mp[PlayerActions.ActionType.DesertHandle] * labourForceCostCoef));
 		a.ShowEndTurnWindow(eventPool[eventIndex]);
 		a.ShowAchievementWindow(achievementIndex);
 		int accomplishedTaskCount = 0;
@@ -177,6 +176,7 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 				accomplishedTaskCount++;
             }
 		}
+
 
 		a.ProgressBarUpd(accomplishedTaskCount);
 		UIManager.Instance.GUIOnNewEventRecieved();
@@ -215,6 +215,7 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
                 {
 					taskAccomplished[i] =true;
 					UIManager.Instance.ShowSendEmail();
+					UIManager.Instance.GetNewMail();
 					index = i;
                 }
             }
@@ -332,6 +333,8 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		{
 			NewRound();
 		}
+		UIManager.Instance.ChangePlantNeedNum((int)(mp[PlayerActions.ActionType.Plant] * labourForceCostCoef));
+		UIManager.Instance.ChangeControlNeedNum((int)(mp[PlayerActions.ActionType.DesertHandle] * labourForceCostCoef));
 	}
 
 	bool CheckNewRound()

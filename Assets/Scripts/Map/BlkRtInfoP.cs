@@ -33,22 +33,25 @@ public partial class BlkRtInfo {
     }
 
 
-    [ContextMenu("Sand Control")]
-    public void SandControl() {
+    /// <returns> whether action applied </returns>
+    public bool SandControl() {
         if(HasActionQueued || !BlkParam.Type.In(BlockType.ShaQiu, BlockType.ShaDi, BlockType.PingDi))
-            return;
+            return false;
         HasActionQueued = true;
         UpdateGreenDeltaBy(1);
         SpawnWorkers();
+        return true;
     }
 
 
-    public void Planting() {
+    /// <returns> whether action applied </returns>
+    public bool Planting() {
         if(HasActionQueued || BlkParam.Type != BlockType.CaoDi)
-            return;
+            return false;
         HasActionQueued = true;
         SetBlkType(BlockType.YouMiao);
         //SpawnWorkers();
+        return true;
     }
 
 

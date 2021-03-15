@@ -179,6 +179,10 @@ public class UIManager : SingletonMono<UIManager>
 
 	public void ShowSendEmail()
 	{
+		if(ToMeiEmailNum<=6)
+        {
+
+        }
 		EmailPaper1.SetActive(true);
 		EmailText1.text = ToDouYe[ToMeiEmailNum];
 	}
@@ -186,13 +190,29 @@ public class UIManager : SingletonMono<UIManager>
 	{
 		EmailPaper1.SetActive(false);
 		ToMeiEmailNum++;
+		int accomplishedTaskCount = 0;
+		foreach (var i in GameFlowCtrler.Instance.taskAccomplished)
+		{
+			if (i)
+			{
+				accomplishedTaskCount++;
+			}
+		}
+		if (accomplishedTaskCount>=6)
+        {
+			SceneManager.LoadScene("GameEndScene");
+		}
 	}
 	//mail
 	public void GetNewMail()
 	{
+		if(ToGeEmailNum+1<=6)
+        {
 		mailRedPoint.SetActive(true);
 		ToGeEmailNum++;
 		canShowEmail = true;
+        }
+
 	}
 	public void ChangePlantNeedNum(int num1)//plant consume
 	{
@@ -278,10 +298,7 @@ public class UIManager : SingletonMono<UIManager>
 				}
 			}
 		}
-		if(TreeAndGlass.value==1)
-        {
-			SceneManager.LoadScene(loadToFinalScene);
-        }
+
 		ChangeTotalNum(FindObjectOfType<GameFlowCtrler>().labourForce);
 
 	}

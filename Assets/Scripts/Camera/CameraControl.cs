@@ -84,5 +84,10 @@ public class CameraControl : SingletonMono<CameraControl> {
                 ClickCallback?.Invoke(rtInfo);
             }
         }
+
+        // exit game
+        if(Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
+        }
     }
 }
