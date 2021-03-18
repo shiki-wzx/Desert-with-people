@@ -5,6 +5,22 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName ="Achivement",menuName ="CreateEvent/Achivement")]
 public class Achivement : ScriptableObject
 {
+    [Header("绿色块达到：")]
+    public int greenBlockReach;
+    [Header("累计多少轮次没有退化")]
+    public int noDegredationRoundCount;
+    [Header("积少成多 I")]
+    public bool AnyNotDesertBlkWhoseAdjDesertLt4;
+    [Header("积少成多 II")]
+    [OnValueChanged("ANDBADEq0Accomplished")]
+    public bool AnyNotDesertBlkWhoseAdjDesertEq0;
+    [Header("积少成多 III")]
+    [OnValueChanged("AGBWAAGAccomplished")]
+    public bool AnyGreenBlkWhoseAdjAllGreen;
+    [Header("牧绿者 I")]
+    public bool SeedingTriggered;
+    [Header("家书数量")]
+    public int letterCount;
     [OnValueChanged("RefreshName")]
     public int index;
     [ValueDropdown("names")]
@@ -16,8 +32,6 @@ public class Achivement : ScriptableObject
     {
         "积少成多I","积少成多II","积少成多III","牧绿者I","牧绿者II","牧绿者III","一纸心温I","一纸心温II","荒漠家书","慎重治沙者I","慎重治沙者II"
     };
-    [ShowInInspector]
-    public AchivementReq requirements;
     private void Awake()
     {
         achivementName = names[index];
@@ -26,6 +40,26 @@ public class Achivement : ScriptableObject
     {
         achivementName = names[index];
     }
+    public void CopyAchievementValue(AchivementReq req)
+    {
+        greenBlockReach = req.greenBlockReach;
+        AnyGreenBlkWhoseAdjAllGreen = req.AnyGreenBlkWhoseAdjAllGreen;
+        AnyNotDesertBlkWhoseAdjDesertEq0 = req.AnyNotDesertBlkWhoseAdjDesertEq0;
+        AnyNotDesertBlkWhoseAdjDesertLt4 = req.AnyNotDesertBlkWhoseAdjDesertLt4;
+        SeedingTriggered = req.SeedingTriggered;
+        noDegredationRoundCount = req.noDegredationRoundCount;
+        letterCount = req.letterCount;
+    }
+    void ANDBADEq0Accomplished()
+    {
+        AnyNotDesertBlkWhoseAdjDesertLt4 = true;
+    }
+    void AGBWAAGAccomplished()
+    {
+        AnyNotDesertBlkWhoseAdjDesertEq0 = true;
+        AnyNotDesertBlkWhoseAdjDesertLt4 = true;
+    }
+
 }
 public struct AchivementReq
 {
@@ -54,4 +88,5 @@ public struct AchivementReq
         AnyNotDesertBlkWhoseAdjDesertEq0 = true;
         AnyNotDesertBlkWhoseAdjDesertLt4 = true;
     }
+
 }

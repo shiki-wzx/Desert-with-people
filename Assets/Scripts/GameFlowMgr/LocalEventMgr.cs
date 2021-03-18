@@ -22,7 +22,6 @@ public class LocalEventMgr : SingletonMono<LocalEventMgr>
 			}
 			MapMgr.Instance.RandomDegrade(2, BlockType.PingDi, BlockType.ShaQiu, BlockType.ShaDi);
 		}
-		UIManager.Instance.ShowEventMessage(thisEvent.index);
 	}
 }
 

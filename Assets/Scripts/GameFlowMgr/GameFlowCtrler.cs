@@ -37,9 +37,11 @@ public class Round
 		currentSeason = Season.Spring;
 	}
 }
+
 public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 {
 	// Start is called before the first frame update
+	public Dictionary<int, int> tirToShikiEventMapping;
 	#region DisplayLayer
 	public UIManager m_UIMgr;
 	public CameraControl m_camCtrl;
@@ -85,10 +87,14 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	public Season currentSeason;
 	public List<bool> taskAccomplished;
 	//public currentCompletation StateInformation = new currentCompletation();
-	public Dictionary<PlayerActions.ActionType, int> mp=new Dictionary<PlayerActions.ActionType, int>();
+	public Dictionary<PlayerActions.ActionType, int> mp = new Dictionary<PlayerActions.ActionType, int>();
 	[Button]
 	public void ReadInInfo()
 	{
+		accomplishedAchivement.Clear();
+		taskAccomplished.Clear();
+		eventPool.Clear();
+		InRoundEventPool.Clear();
 		eventSystem = GetComponent<EventSystem>();
 		localEventMgr = FindObjectOfType<LocalEventMgr>();
 		RegisterEvents(eventSettings);
@@ -122,6 +128,9 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	}
 	private void Start()
 	{
+		tirToShikiEventMapping = new Dictionary<int, int>();
+		tirToShikiEventMapping[2] = 0;
+		for (int i = 5; i <= 12; i++) tirToShikiEventMapping[i] = i - 4;
 		var a = UIManager.Instance;
 		m_UIMgr.GetNewMail();
 		a.ChangePlantNeedNum((int)(mp[PlayerActions.ActionType.Plant] * labourForceCostCoef));
@@ -148,80 +157,83 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		//轮次流程：在当前轮次结束前执行当前轮次的事件,然后更新地块，然后测试成就，然后调整季节，然后轮次+1（当前轮次结束），劳动力回复，执行下一轮的随机事件
 		int eventIndex = ExcuteEvent(round.roundCount, false);
 		UpdateBlkInfo();
-		int achiId=
+		int achiId =
 		AchivementTest(AchivementUpd());
 		TaskTest(TaskUpd());
 		SeasonAdjust(round.roundCount);
 		int year = (round.roundCount / 12);
-		Debug.Log(year);
 		//on last round end
-		UIUpd(eventIndex,achiId);
+		UIUpd(eventIndex, achiId);
 		round++;//=================================================================
 		LabourForceMaximunIncrease(round.roundCount);
 		LabourForceRecover();
-		if(MapMgr.Instance.CountBlk(BlockType.ShaQiu, BlockType.ShaDi) > 27)
+		if (MapMgr.Instance.CountBlk(BlockType.ShaQiu, BlockType.ShaDi) > 27) {
 			localEventMgr.ExcuteEvent(eventPool[2], out _);
+			skipDesertify = true;
+		}
 		// on new round begin
 		ExcuteEvent(round.roundCount, true);
 	}
-	public void UIUpd(int eventIndex,int achievementIndex)
+	public void UIUpd(int eventIndex, int achievementIndex)
 	{
 		var a = UIManager.Instance;
 
-		UIManager.Instance.changeCalendar((round.roundCount / 12)+1, (int)currentSeason);
-		a.ShowEndTurnWindow(eventPool[eventIndex]);
-		a.ShowAchievementWindow(achievementIndex);
+		UIManager.Instance.changeCalendar((round.roundCount / 12) + 1, (int)currentSeason);
+		if (eventIndex != -1)
+			a.ShowEndTurnWindow(eventPool[eventIndex]);
+		if (achievementIndex != -1)
+			a.ShowAchievementWindow(achievementIndex);
 		int accomplishedTaskCount = 0;
 		foreach (var i in taskAccomplished)
-		{	if(i)
-            {
+		{
+			if (i)
+			{
 				accomplishedTaskCount++;
-            }
+			}
 		}
-
-
 		a.ProgressBarUpd(accomplishedTaskCount);
 		UIManager.Instance.GUIOnNewEventRecieved();
 		Debug.Log("acTask" + accomplishedTaskCount);
 		//under fix
-	    UIManager.Instance.ShowTaskMessage(accomplishedTaskCount);
-		
+		UIManager.Instance.ShowTaskMessage(accomplishedTaskCount);
+
 		//todo accordingto the return value show
 	}
 
 	//todo tasktest:if reached    taskaccomplished [index] set true    call audio
 	public void LabourForceMaximunIncrease(int roundcount)
 	{
-		if( roundcount>0&&roundcount%12==0)
-        {
+		if (roundcount > 0 && roundcount % 12 == 0)
+		{
 			labourForceMaximun += 50;
-			Debug.Log("new year");
-        }
+			//Debug.Log("new year");
+		}
 	}
 	TaskReq TaskUpd()
-    {
+	{
 		TaskReq taskreq = new TaskReq();
 		taskreq.GreenBlockReach = MapMgr.Instance.CountBlk(BlockType.CaoDi, BlockType.YouMiao, BlockType.ZhiWu);
-		taskreq.NotDesertReach = MapMgr.Instance.CountBlk(BlockType.CaoDi, BlockType.YouMiao, BlockType.ZhiWu, BlockType.PingDi,BlockType.ZhiShaZhan);
+		taskreq.NotDesertReach = MapMgr.Instance.CountBlk(BlockType.CaoDi, BlockType.YouMiao, BlockType.ZhiWu, BlockType.PingDi, BlockType.ZhiShaZhan);
 		return taskreq;
-    }
+	}
 	int TaskTest(TaskReq taskreq)
-    {
+	{
 		int index = 0;
-		for(int i=0;i<EventSystem.Instance.tasks.Count;i++)
-        {
+		for (int i = 0; i < EventSystem.Instance.tasks.Count; i++)
+		{
 			TasksInfo task = EventSystem.Instance.tasks[i];
-			if(taskAccomplished[task.taskIndex]==false)
-            {
-				if(taskreq.GreenBlockReach>=task.targetGreen&&taskreq.NotDesertReach>=task.targetNotDesert)
-                {
-					taskAccomplished[i] =true;
+			if (taskAccomplished[task.taskIndex] == false)
+			{
+				if (taskreq.GreenBlockReach >= task.targetGreen && taskreq.NotDesertReach >= task.targetNotDesert)
+				{
+					taskAccomplished[i] = true;
 					UIManager.Instance.ShowSendEmail();
 					UIManager.Instance.GetNewMail();
 					index = i;
-                }
-            }
-        }
+					break;
+				}
+			}
+		}
 		return index;
 	}
 	AchivementReq AchivementUpd()
@@ -253,6 +265,16 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 	int ExcuteEvent(int roundCount, bool inRound)
 	{
 		int eventIndex = -1;
+		if (letterInfo.currentLetterCount == 3 && !thirdLetterTriggered)
+		{
+			eventIndex = 4;
+			bool tempSkipDesertify;
+			LocalEventMgr.Instance.ExcuteEvent(eventPool[4], out tempSkipDesertify);
+			skipDesertify |= tempSkipDesertify;
+			thirdLetterTriggered = true;
+			UIManager.Instance.ShowEventMessage(tirToShikiEventMapping[eventIndex]);
+			return eventIndex;
+		}
 		if (!inRound)
 		{
 			//先检索执行特定事件
@@ -260,14 +282,18 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 			{
 				if (thisEvent.property == LocalEventProperty.OnRoundEnd)
 				{
-					localEventMgr.ExcuteEvent(thisEvent, out skipDesertify);
+					bool tempSkipDesertify;
+					localEventMgr.ExcuteEvent(thisEvent, out tempSkipDesertify);
+					skipDesertify |= tempSkipDesertify;
 					eventIndex = thisEvent.index;
 					continue;
 				}
 				//roundEndEvent
 				if (roundCount == thisEvent.specificRound && !thisEvent.isRandomEvent)
 				{
-					localEventMgr.ExcuteEvent(thisEvent, out skipDesertify);
+					bool tempSkipDesertify;
+					localEventMgr.ExcuteEvent(thisEvent, out tempSkipDesertify);
+					skipDesertify |= tempSkipDesertify;
 					eventIndex = thisEvent.index;
 					continue;
 				}
@@ -277,20 +303,17 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		{
 			//回合开始，执行随机事件
 			eventIndex = Random.Range(0, 12);
-			LocalEventMgr.Instance.ExcuteEvent(InRoundEventPool[eventIndex], out skipDesertify);
+			bool tempSkipDesertify;
+			LocalEventMgr.Instance.ExcuteEvent(InRoundEventPool[eventIndex], out tempSkipDesertify);
+			skipDesertify |= tempSkipDesertify;
+			UIManager.Instance.ShowEventMessage(tirToShikiEventMapping[InRoundEventPool[eventIndex].index]);
 		}
 		//第三封信的回合，特判
-		if (letterInfo.currentLetterCount == 3 && !thirdLetterTriggered)
-		{
-			eventIndex = 4;
-			LocalEventMgr.Instance.ExcuteEvent(eventPool[4], out skipDesertify);
-			thirdLetterTriggered = true;
-		}
 		return eventIndex;
 	}
 	int AchivementTest(AchivementReq achi)
 	{
-		int index = 0;
+		int index = -1;
 		if (achi.AnyNotDesertBlkWhoseAdjDesertLt4 && !accomplishedAchivement[0])
 		{
 			accomplishedAchivement[0] = true;
@@ -311,7 +334,7 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 			accomplishedAchivement[3] = true;
 			index = 3;
 		}
-		for (int i = 0; i < EventSystem.Instance.achivements.Count; i++)
+		for (int i = 4; i < EventSystem.Instance.achivements.Count; i++)
 		{
 			AchivementInfo achivement = EventSystem.Instance.achivements[i];
 			if (accomplishedAchivement[achivement.index] == false)
@@ -327,6 +350,7 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 
 			}
 		}
+		Debug.Log(index);
 		return index;
 	}
 	private void Update()
@@ -338,7 +362,6 @@ public class GameFlowCtrler : SingletonMono<GameFlowCtrler>
 		UIManager.Instance.ChangePlantNeedNum((int)(mp[PlayerActions.ActionType.Plant] * labourForceCostCoef));
 		UIManager.Instance.ChangeControlNeedNum((int)(mp[PlayerActions.ActionType.DesertHandle] * labourForceCostCoef));
 	}
-
 	bool CheckNewRound()
 	{
 		return labourForce <= 0;

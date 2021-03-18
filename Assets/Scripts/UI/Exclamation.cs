@@ -32,12 +32,12 @@ public class Exclamation : MonoBehaviour
            if(downAlpha)
             {
                 blinkImage.color = new Color(255, 255, 255, Mathf.Lerp(blinkImage.color.a, 100, t*Time.deltaTime));
-                Debug.Log(downAlpha);
+                //Debug.Log(downAlpha);
             }
             else
             {
                 blinkImage.color = new Color(255, 255, 255, Mathf.Lerp(blinkImage.color.a, 255, t * Time.deltaTime));
-                Debug.Log(downAlpha);
+                //Debug.Log(downAlpha);
             }
         }
     }

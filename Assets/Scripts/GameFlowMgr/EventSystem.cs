@@ -19,20 +19,22 @@ public class EventSystem : SingletonMono<EventSystem>
 		}
 		foreach (var achivement in achivementsSettings.achivements)
 		{
-			achivements.Add(new AchivementInfo(achivement.index));
+			achivements.Add(new AchivementInfo(achivement));
 		}
 
 	}
 	[Button]
 	public void ReadInInfo()
 	{
+		tasks.Clear();
+		achivements.Clear();
 		foreach (var task in taskEventSettings.tasks)
 		{
 			tasks.Add(new TasksInfo(task.taskIndex, task.targetGreen, task.targetNotDesert));
 		}
 		foreach (var achivement in achivementsSettings.achivements)
 		{
-			achivements.Add(new AchivementInfo(achivement.index));
+			achivements.Add(new AchivementInfo(achivement));
 		}
 
 	}
@@ -52,7 +54,7 @@ public class EventSystem : SingletonMono<EventSystem>
 		for (int i = 0; i < achivements.Count; i++)
 		{
 			achivementsSettings.achivements[i].index = achivements[i].index;
-			achivementsSettings.achivements[i].requirements = achivements[i].requirement;
+			achivementsSettings.achivements[i].CopyAchievementValue(achivements[i].requirement);
 			achivementsSettings.achivements[i].achivementName = achivements[i].achivementName;
 		}
 	}
@@ -82,7 +84,17 @@ public class TasksInfo
 }
 public class AchivementInfo
 {
-	public AchivementInfo(int _index) => index = _index;
+	public AchivementInfo(Achivement achivement) {
+		index = achivement.index;
+		achivementName = achivement.achivementName;
+		requirement.AnyNotDesertBlkWhoseAdjDesertLt4 = achivement.AnyNotDesertBlkWhoseAdjDesertLt4;
+		requirement.AnyGreenBlkWhoseAdjAllGreen = achivement.AnyGreenBlkWhoseAdjAllGreen;
+		requirement.AnyNotDesertBlkWhoseAdjDesertEq0 = achivement.AnyNotDesertBlkWhoseAdjDesertEq0;
+		requirement.greenBlockReach = achivement.greenBlockReach;
+		requirement.letterCount = achivement.letterCount;
+		requirement.SeedingTriggered = achivement.SeedingTriggered;
+		requirement.noDegredationRoundCount = achivement.noDegredationRoundCount;
+	}
 	[Header("³É¾ÍÐòºÅ£º")]
 	[OnValueChanged("RefreshName")]
 	public int index;

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,32 +76,30 @@ public class UIManager : SingletonMono<UIManager>
 		ToMeiEmailNum = 0;
 	}
 	public void OnNewPlayerQuit()
-    {
+	{
 		newPlayer.SetActive(false);
-    }
+	}
 	public void OnPlantTreeClick()
 	{
-		if (FindObjectOfType<GameFlowCtrler>().labourForce < (int)GameFlowCtrler.Instance.mp[PlayerActions.ActionType.Plant])
+		var cost = (int)(GameFlowCtrler.Instance.mp[PlayerActions.ActionType.Plant] * GameFlowCtrler.Instance.labourForceCostCoef);
+		if (GameFlowCtrler.Instance.labourForce >= cost)
 		{
-			Debug.LogWarning("Not enough labourforce.");
+			// Debug.Log("Plant Tree");
+			PlayerMovement.Instance.Move(PlayerActions.ActionType.Plant);
 		}
-		else
-		{
-			FindObjectOfType<PlayerMovement>().Move(PlayerActions.ActionType.Plant);
-			Debug.Log("plantTree!");
-		}
+		// else
+		// 	Debug.Log("labourforce not enough");
 	}
 	public void OnHandlingDesert()
 	{
-		if (FindObjectOfType<GameFlowCtrler>().labourForce < (int)GameFlowCtrler.Instance.mp[PlayerActions.ActionType.DesertHandle])
+		var cost = (int)(GameFlowCtrler.Instance.mp[PlayerActions.ActionType.DesertHandle] * GameFlowCtrler.Instance.labourForceCostCoef);
+		if (GameFlowCtrler.Instance.labourForce >= cost)
 		{
-			Debug.LogWarning("Not enough!");
+			// Debug.Log("Handle Desert");
+			PlayerMovement.Instance.Move(PlayerActions.ActionType.DesertHandle);
 		}
-		else
-		{
-			FindObjectOfType<PlayerMovement>().Move(PlayerActions.ActionType.DesertHandle);
-			Debug.Log("Handle!");
-		}
+		// else
+		// 	Debug.Log("labourforce not enough");
 	}
 	public void GUIOnNewEventRecieved()
 	{
@@ -132,7 +130,7 @@ public class UIManager : SingletonMono<UIManager>
 	}
 	public void ShowTaskMessage(int num)
 	{
-		Debug.Log(num);
+		//Debug.Log(num);
 		TaskWindow.text = TaskText[num];
 	}
 	public void ProgressBarUpd(int taskCnt)
@@ -179,10 +177,10 @@ public class UIManager : SingletonMono<UIManager>
 
 	public void ShowSendEmail()
 	{
-		if(ToMeiEmailNum<=6)
-        {
+		if (ToMeiEmailNum <= 6)
+		{
 
-        }
+		}
 		EmailPaper1.SetActive(true);
 		EmailText1.text = ToDouYe[ToMeiEmailNum];
 	}
@@ -198,20 +196,20 @@ public class UIManager : SingletonMono<UIManager>
 				accomplishedTaskCount++;
 			}
 		}
-		if (accomplishedTaskCount>=6)
-        {
+		if (accomplishedTaskCount >= 6)
+		{
 			SceneManager.LoadScene("GameEndScene");
 		}
 	}
 	//mail
 	public void GetNewMail()
 	{
-		if(ToGeEmailNum+1<=6)
-        {
-		mailRedPoint.SetActive(true);
-		ToGeEmailNum++;
-		canShowEmail = true;
-        }
+		if (ToGeEmailNum + 1 <= 6)
+		{
+			mailRedPoint.SetActive(true);
+			ToGeEmailNum++;
+			canShowEmail = true;
+		}
 
 	}
 	public void ChangePlantNeedNum(int num1)//plant consume
@@ -299,7 +297,7 @@ public class UIManager : SingletonMono<UIManager>
 			}
 		}
 
-		ChangeTotalNum(FindObjectOfType<GameFlowCtrler>().labourForce);
+		ChangeTotalNum(GameFlowCtrler.Instance.labourForce);
 
 	}
 	string changeNumToChinese(int num)

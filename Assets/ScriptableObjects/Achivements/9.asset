@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f52bf1e0de0f5674fbcd3c8d11db087b, type: 3}
   m_Name: 9
   m_EditorClassIdentifier: 
+  greenBlockReach: 0
+  noDegredationRoundCount: 3
+  AnyNotDesertBlkWhoseAdjDesertLt4: 0
+  AnyNotDesertBlkWhoseAdjDesertEq0: 0
+  AnyGreenBlkWhoseAdjAllGreen: 0
+  SeedingTriggered: 0
+  letterCount: 0
   index: 9
   achivementName: "\u614E\u91CD\u6CBB\u6C99\u8005I"
   displayContent: 
